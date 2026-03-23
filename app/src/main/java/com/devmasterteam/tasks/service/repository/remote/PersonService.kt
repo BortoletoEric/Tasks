@@ -11,7 +11,7 @@ interface PersonService {
 
     @POST("Authentication/Login")
     @FormUrlEncoded
-    fun login(
+    suspend fun login(
         @Field("email") email: String,
         @Field("password") password: String
     ): Response<PersonModel> {
@@ -21,7 +21,7 @@ interface PersonService {
 
     @POST("Authentication/Create")
     @FormUrlEncoded
-    fun create(
+    suspend fun create(
         @Field("email") name: String,
         @Field("email") email: String,
         @Field("password") password: String,
