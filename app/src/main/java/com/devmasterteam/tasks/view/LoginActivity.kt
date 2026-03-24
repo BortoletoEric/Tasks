@@ -52,18 +52,18 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun observe() {
         viewModel.login.observe(this) {
-            if (it) {
+            if (it.status()) {
                 startActivity(Intent(applicationContext, MainActivity::class.java))
                 finish()
             } else {
-                Toast.makeText(applicationContext, "Erro", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, it.message(), Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun handleLogin() {
-        val email = binding.editEmail.toString()
-        val password = binding.editPassword.toString()
+        val email = binding.editEmail.text.toString()
+        val password = binding.editPassword.text.toString()
 
         viewModel.login(email, password)
     }

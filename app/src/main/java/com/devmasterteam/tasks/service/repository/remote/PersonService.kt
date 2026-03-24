@@ -7,27 +7,20 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
 interface PersonService {
-    // Implementação da chamada de login
 
     @POST("Authentication/Login")
     @FormUrlEncoded
     suspend fun login(
         @Field("email") email: String,
         @Field("password") password: String
-    ): Response<PersonModel> {
-
-        return TODO("Provide the return value")
-    }
+    ): Response<PersonModel>
 
     @POST("Authentication/Create")
     @FormUrlEncoded
     suspend fun create(
-        @Field("email") name: String,
+        @Field("name") name: String,
         @Field("email") email: String,
         @Field("password") password: String,
-        @Field("password") receivenews: String
-    ): Response<PersonModel> {
-
-        return TODO("Provide the return value")
-    }
+        @Field("receiveNews") receiveNews: String
+    ): Response<PersonModel>
 }
