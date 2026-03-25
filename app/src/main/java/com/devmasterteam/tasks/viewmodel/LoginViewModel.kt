@@ -11,7 +11,7 @@ import com.devmasterteam.tasks.service.repository.local.PreferencesManager
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
-class LoginViewModel(application: Application) : AndroidViewModel(application) {
+class LoginViewModel(application: Application) : BaseAndroidViewModel(application) {
     private val preferencesManager = PreferencesManager(application.applicationContext)
     private val personRepository: PersonRepository = PersonRepository()
 
@@ -24,9 +24,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             if (response.isSuccessful && response.body() != null) {
                 _login.value = ValidationModel()
             } else {
-                val msgJason = response.errorBody()?.string().toString()
-                val message = Gson().fromJson(msgJason, String::class.java)
-                _login.value = ValidationModel(message)
+                _login.value = errorMessage(response)
             }
         }
     }

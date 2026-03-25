@@ -12,7 +12,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 
-class RegisterViewModel(application: Application) : AndroidViewModel(application) {
+class RegisterViewModel(application: Application) : BaseAndroidViewModel(application) {
     private val preferencesManager = PreferencesManager(application.applicationContext)
     private val personRepository = PersonRepository()
 
@@ -25,9 +25,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
             if (response.isSuccessful && response.body() != null) {
                 _createUser.value = ValidationModel()
             } else {
-                val msgJason = response.errorBody()?.string().toString()
-                val message = Gson().fromJson(msgJason, String::class.java)
-                _createUser.value = ValidationModel(message)
+                _createUser.value = errorMessage(response)
             }
         }
     }
