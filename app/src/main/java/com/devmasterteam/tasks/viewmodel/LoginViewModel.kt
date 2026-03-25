@@ -4,15 +4,21 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.devmasterteam.tasks.service.constants.TaskConstants
 import com.devmasterteam.tasks.service.model.ValidationModel
 import com.devmasterteam.tasks.service.repository.PersonRepository
+import com.devmasterteam.tasks.service.repository.local.PreferencesManager
 import kotlinx.coroutines.launch
 
 class LoginViewModel(application: Application) : BaseAndroidViewModel(application) {
+    private val preferencesManager = PreferencesManager(application.applicationContext)
     private val personRepository: PersonRepository = PersonRepository()
 
     private val _login = MutableLiveData<ValidationModel>()
     val login: LiveData<ValidationModel> = _login
+
+    private val _loggedUser = MutableLiveData<Boolean>()
+    val loggedUser: LiveData<Boolean> = _loggedUser
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
@@ -24,6 +30,16 @@ class LoginViewModel(application: Application) : BaseAndroidViewModel(applicatio
                 _login.value = errorMessage(response)
             }
         }
+    }
+
+    fun verifyUserLogged() {
+        viewModelScope.launch {
+            val token = preferencesManager.get(TaskConstants.SHARED.TOKEN_KEY)
+            val personKey = preferencesManager.get(TaskConstants.SHARED.PERSON_KEY)
+
+            _loggedUser.value = (token != "" && personKey != "")
+        }
+
     }
 
 }
