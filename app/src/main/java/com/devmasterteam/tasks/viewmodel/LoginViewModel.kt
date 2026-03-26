@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 class LoginViewModel(application: Application) : BaseAndroidViewModel(application) {
     private val preferencesManager = PreferencesManager(application.applicationContext)
     private val personRepository: PersonRepository = PersonRepository()
-    private val priorityRepository = PriorityRepository()
+    private val priorityRepository = PriorityRepository(application.applicationContext)
 
     private val _login = MutableLiveData<ValidationModel>()
     val login: LiveData<ValidationModel> = _login
@@ -43,8 +43,10 @@ class LoginViewModel(application: Application) : BaseAndroidViewModel(applicatio
             _loggedUser.value = logged
 
             if (!logged) {
-                val result = priorityRepository.getList()
-                val s = ""
+                val response = priorityRepository.getList()
+                if (response.isSuccessful && response.body() != null) {
+                    priorityRepository.save(response.body()!!)
+                }
             }
         }
 
