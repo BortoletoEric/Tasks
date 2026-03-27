@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.devmasterteam.tasks.databinding.FragmentAllTasksBinding
 import com.devmasterteam.tasks.service.constants.TaskConstants
+import com.devmasterteam.tasks.service.listener.TaskListener
 import com.devmasterteam.tasks.view.adapter.TaskAdapter
 import com.devmasterteam.tasks.viewmodel.TaskListViewModel
 
@@ -29,6 +30,39 @@ class AllTasksFragment : Fragment() {
 
         taskFilter = requireArguments().getInt(TaskConstants.BUNDLE.TASKFILTER, 0)
 
+        val taskListener = object : TaskListener {
+            /**
+             * Click para edição
+             */
+            override fun onListClick(id: kotlin.Int) {
+                TODO("Not yet implemented")
+            }
+
+            /**
+             * Remoção
+             */
+            override fun onDeleteClick(id: kotlin.Int) {
+                TODO("Not yet implemented")
+            }
+
+            /**
+             * Completa tarefa
+             */
+            override fun onCompleteClick(id: kotlin.Int) {
+                TODO("Not yet implemented")
+            }
+
+            /**
+             * Descompleta tarefa
+             */
+            override fun onUndoClick(id: kotlin.Int) {
+                TODO("Not yet implemented")
+            }
+
+        }
+
+        adapter.attachListener(taskListener)
+
         // Cria os observadores
         observe()
 
@@ -37,6 +71,7 @@ class AllTasksFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        viewModel.list()
     }
 
     override fun onDestroyView() {
@@ -45,5 +80,8 @@ class AllTasksFragment : Fragment() {
     }
 
     private fun observe() {
+        viewModel.tasks.observe(viewLifecycleOwner) {
+            adapter.updateTasks(it)
+        }
     }
 }
