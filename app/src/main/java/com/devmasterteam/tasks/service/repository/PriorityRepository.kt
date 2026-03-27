@@ -21,10 +21,11 @@ class PriorityRepository(context: Context) {
     }
 
     suspend fun save(list: List<PriorityModel>) {
-        val a = database.list()
         database.clear()
-        val b = database.list()
         database.save(list)
-        val c = database.list()
+    }
+
+    suspend fun getPriorityDescription(id: Int): String {
+        return database.getDescription(id) ?: ""
     }
 }

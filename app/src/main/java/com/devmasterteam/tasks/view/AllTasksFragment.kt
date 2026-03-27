@@ -22,6 +22,9 @@ class AllTasksFragment : Fragment() {
     private val adapter = TaskAdapter()
     private var taskFilter = 0
 
+    // TAREFAS
+    // recyclerview - descricoes
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, b: Bundle?): View {
         _binding = FragmentAllTasksBinding.inflate(inflater, container, false)
 
@@ -71,7 +74,10 @@ class AllTasksFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.list()
+
+
+
+        viewModel.list(taskFilter)
     }
 
     override fun onDestroyView() {
