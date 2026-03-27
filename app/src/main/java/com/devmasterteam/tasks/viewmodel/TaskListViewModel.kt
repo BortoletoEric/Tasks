@@ -19,7 +19,10 @@ class TaskListViewModel(application: Application) : AndroidViewModel(application
     private val _tasks = MutableLiveData<List<TaskModel>>()
     val tasks: LiveData<List<TaskModel>> = _tasks
 
+    private var taskFilter = TaskConstants.FILTER.ALL
+
     fun list(filter: Int) {
+        taskFilter = filter
         viewModelScope.launch {
             val response = when(filter) {
                 TaskConstants.FILTER.ALL -> taskRepository.list()
@@ -39,4 +42,23 @@ class TaskListViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun status(taskId: Int, complete: Boolean) {
+        viewModelScope.launch {
+            val response = if (complete) {
+                taskRepository.complete(taskId)
+            } else {
+                taskRepository.undo(taskId)
+            }
+
+            if (response.isSuccessful && response.body() != null) {
+                list(taskFilter)
+            }
+        }
+    }
+
+    fun delete(id: Int) {
+        viewModelScope.launch {
+            taskRepository.delete(id)
+        }
+    }
 }

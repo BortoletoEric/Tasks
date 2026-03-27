@@ -12,6 +12,18 @@ class TaskRepository {
         remote.create(task.priorityId, task.description, task.dueDate, task.complete)
     }
 
+    suspend fun complete(id: Int): Response<Boolean> {
+        return remote.complete(id)
+    }
+
+    suspend fun undo(id: Int): Response<Boolean> {
+        return remote.undo(id)
+    }
+
+    suspend fun delete(id: Int): Response<Boolean> {
+        return remote.delete(id)
+    }
+
     suspend fun list(): Response<List<TaskModel>> {
         return remote.list()
     }

@@ -45,21 +45,21 @@ class AllTasksFragment : Fragment() {
              * Remoção
              */
             override fun onDeleteClick(id: kotlin.Int) {
-                TODO("Not yet implemented")
+                viewModel.delete(id)
             }
 
             /**
              * Completa tarefa
              */
             override fun onCompleteClick(id: kotlin.Int) {
-                TODO("Not yet implemented")
+                viewModel.status(id, true)
             }
 
             /**
              * Descompleta tarefa
              */
             override fun onUndoClick(id: kotlin.Int) {
-                TODO("Not yet implemented")
+                viewModel.status(id, false)
             }
 
         }
