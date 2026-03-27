@@ -9,6 +9,7 @@ import com.devmasterteam.tasks.service.model.ValidationModel
 import com.devmasterteam.tasks.service.repository.PersonRepository
 import com.devmasterteam.tasks.service.repository.PriorityRepository
 import com.devmasterteam.tasks.service.repository.local.PreferencesManager
+import com.devmasterteam.tasks.service.repository.remote.RetrofitClient
 import kotlinx.coroutines.launch
 
 class LoginViewModel(application: Application) : BaseAndroidViewModel(application) {
@@ -26,7 +27,17 @@ class LoginViewModel(application: Application) : BaseAndroidViewModel(applicatio
         viewModelScope.launch {
             val response = personRepository.login(email, password)
             if (response.isSuccessful && response.body() != null) {
-                super.saveUserAuthentication(response.body()!!)
+                val personModel = response.body()!!
+
+                RetrofitClient.addHeaders(personModel.personKey, personModel.token)
+
+                super.saveUserAuthentication(personModel)
+
+                val responsePriority = priorityRepository.getList()
+                if (responsePriority.isSuccessful && responsePriority.body() != null) {
+                    priorityRepository.save(responsePriority.body()!!)
+                }
+
                 _login.value = ValidationModel()
             } else {
                 _login.value = errorMessage(response)
@@ -39,14 +50,16 @@ class LoginViewModel(application: Application) : BaseAndroidViewModel(applicatio
             val token = preferencesManager.get(TaskConstants.SHARED.TOKEN_KEY)
             val personKey = preferencesManager.get(TaskConstants.SHARED.PERSON_KEY)
 
-            var logged = (token != "" && personKey != "")
-            _loggedUser.value = logged
+            if (token != "" && personKey != "") {
+                RetrofitClient.addHeaders(personKey, token)
+                _loggedUser.value = true
 
-            if (!logged) {
                 val response = priorityRepository.getList()
                 if (response.isSuccessful && response.body() != null) {
                     priorityRepository.save(response.body()!!)
                 }
+            } else {
+                _loggedUser.value = false
             }
         }
 

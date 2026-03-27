@@ -7,6 +7,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.app.DatePickerDialog
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -71,6 +72,17 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     private fun observe() {
+        viewModel.priorityList.observe(this) {
+            listPriority = it
+            // lista
+            val list = mutableListOf<String>()
+            for (item in it) {
+                list.add(item.description)
+            }
+            // adapter
+            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, list)
+            binding.spinnerPriority.adapter = adapter
+        }
     }
 
     private fun toast(str: String) {
@@ -78,7 +90,18 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     private fun handleSave() {
-        //val task = TaskModel()
+        val description = binding.editDescription.editableText.toString()
+        val index = binding.spinnerPriority.selectedItemPosition
+        if (index >= 0 && index < listPriority.size) {
+            val priorityId = listPriority[index].id
+            val completed = binding.checkComplete.isChecked
+            val dueDate = binding.buttonDate.text.toString()
+
+            val task = TaskModel(0, priorityId, description, dueDate, completed)
+            viewModel.save(task)
+        } else {
+            toast("Favor selecionar uma prioridade.")
+        }
     }
 
     private fun handleDate() {
