@@ -20,6 +20,10 @@ class PriorityRepository(context: Context) {
         }
 
         fun getCacheDescription(id: Int) = cache[id] ?: ""
+
+        fun clearCache() {
+            cache.clear()
+        }
     }
 
     suspend fun getList(): Response<List<PriorityModel>> {
@@ -32,16 +36,19 @@ class PriorityRepository(context: Context) {
 
     suspend fun getPriorityDescription(id: Int): String {
         val cached = getCacheDescription(id)
-        return if (cached == "") {
-            val description = database.getDescription(id) ?: ""
-            setCacheDescription(id, description)
-            description
-        } else {
-             cached
+        if (cached != "") {
+            return cached
         }
+
+        val description = database.getDescription(id) ?: ""
+        if (description != "") {
+            setCacheDescription(id, description)
+        }
+        return description
     }
 
     suspend fun save(list: List<PriorityModel>) {
+        clearCache()
         database.clear()
         database.save(list)
     }
