@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.devmasterteam.tasks.service.constants.TaskConstants
+import com.devmasterteam.tasks.service.exception.NoInternetException
 import com.devmasterteam.tasks.service.model.ValidationModel
 import com.devmasterteam.tasks.service.repository.PersonRepository
 import com.devmasterteam.tasks.service.repository.PriorityRepository
@@ -14,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel(application: Application) : BaseAndroidViewModel(application) {
     private val preferencesManager = PreferencesManager(application.applicationContext)
-    private val personRepository: PersonRepository = PersonRepository()
+    private val personRepository: PersonRepository = PersonRepository(application.applicationContext)
     private val priorityRepository = PriorityRepository(application.applicationContext)
 
     private val _login = MutableLiveData<ValidationModel>()
@@ -25,22 +26,26 @@ class LoginViewModel(application: Application) : BaseAndroidViewModel(applicatio
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
-            val response = personRepository.login(email, password)
-            if (response.isSuccessful && response.body() != null) {
-                val personModel = response.body()!!
+            try {
+                val response = personRepository.login(email, password)
+                if (response.isSuccessful && response.body() != null) {
+                    val personModel = response.body()!!
 
-                RetrofitClient.addHeaders(personModel.personKey, personModel.token)
+                    RetrofitClient.addHeaders(personModel.personKey, personModel.token)
 
-                super.saveUserAuthentication(personModel)
+                    super.saveUserAuthentication(personModel)
 
-                val responsePriority = priorityRepository.getList()
-                if (responsePriority.isSuccessful && responsePriority.body() != null) {
-                    priorityRepository.save(responsePriority.body()!!)
+                    val responsePriority = priorityRepository.getList()
+                    if (responsePriority.isSuccessful && responsePriority.body() != null) {
+                        priorityRepository.save(responsePriority.body()!!)
+                    }
+
+                    _login.value = ValidationModel()
+                } else {
+                    _login.value = errorMessage(response)
                 }
-
-                _login.value = ValidationModel()
-            } else {
-                _login.value = errorMessage(response)
+            } catch (e: NoInternetException) {
+                _login.value = ValidationModel(e.errorMessage)
             }
         }
     }

@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 
 class RegisterViewModel(application: Application) : BaseAndroidViewModel(application) {
-    private val personRepository = PersonRepository()
+    private val personRepository = PersonRepository(application.applicationContext)
 
     private val _createUser = MutableLiveData<ValidationModel>()
     val createUser: LiveData<ValidationModel> = _createUser
