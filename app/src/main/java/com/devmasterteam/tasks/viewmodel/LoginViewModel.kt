@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.devmasterteam.tasks.R
 import com.devmasterteam.tasks.service.constants.TaskConstants
 import com.devmasterteam.tasks.service.exception.NoInternetException
 import com.devmasterteam.tasks.service.model.ValidationModel
@@ -15,7 +16,8 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel(application: Application) : BaseAndroidViewModel(application) {
     private val preferencesManager = PreferencesManager(application.applicationContext)
-    private val personRepository: PersonRepository = PersonRepository(application.applicationContext)
+    private val personRepository: PersonRepository =
+        PersonRepository(application.applicationContext)
     private val priorityRepository = PriorityRepository(application.applicationContext)
 
     private val _login = MutableLiveData<ValidationModel>()
@@ -44,8 +46,8 @@ class LoginViewModel(application: Application) : BaseAndroidViewModel(applicatio
                 } else {
                     _login.value = errorMessage(response)
                 }
-            } catch (e: NoInternetException) {
-                _login.value = ValidationModel(e.errorMessage)
+            } catch (e: Exception) {
+                _login.value = handleException(e)
             }
         }
     }
