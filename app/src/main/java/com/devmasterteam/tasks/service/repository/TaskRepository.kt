@@ -1,37 +1,38 @@
 package com.devmasterteam.tasks.service.repository
 
+import android.content.Context
 import com.devmasterteam.tasks.service.model.TaskModel
 import com.devmasterteam.tasks.service.repository.remote.RetrofitClient
 import com.devmasterteam.tasks.service.repository.remote.TaskService
 import retrofit2.Response
 
-class TaskRepository {
+class TaskRepository(context: Context): BaseRepository(context) {
     private val remote = RetrofitClient.getService(TaskService::class.java)
 
-    suspend fun save(task: TaskModel) {
-        remote.create(task.priorityId, task.description, task.dueDate, task.complete)
+    suspend fun save(task: TaskModel): Response<Boolean> {
+        return safeApiCall { remote.create(task.priorityId, task.description, task.dueDate, task.complete) }
     }
 
     suspend fun complete(id: Int): Response<Boolean> {
-        return remote.complete(id)
+        return safeApiCall { remote.complete(id) }
     }
 
     suspend fun undo(id: Int): Response<Boolean> {
-        return remote.undo(id)
+        return safeApiCall { remote.undo(id) }
     }
 
     suspend fun delete(id: Int): Response<Boolean> {
-        return remote.delete(id)
+        return safeApiCall { remote.delete(id) }
     }
 
     suspend fun list(): Response<List<TaskModel>> {
-        return remote.list()
+        return safeApiCall { remote.list() }
     }
         suspend fun listNext(): Response<List<TaskModel>> {
-        return remote.listNext()
+        return safeApiCall { remote.listNext() }
     }
         suspend fun listOverdue(): Response<List<TaskModel>> {
-        return remote.listOverdue()
+        return safeApiCall { remote.listOverdue() }
     }
 
 }

@@ -30,7 +30,6 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
     }
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     private var listPriority: List<PriorityModel> = mutableListOf()
-    private var taskId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +81,15 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
             // adapter
             val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, list)
             binding.spinnerPriority.adapter = adapter
+        }
+
+        viewModel.taskSaved.observe(this) {
+            if (it.status()) {
+                toast(getString(R.string.msg_task_created))
+                finish()
+            } else {
+                toast(it.message())
+            }
         }
     }
 

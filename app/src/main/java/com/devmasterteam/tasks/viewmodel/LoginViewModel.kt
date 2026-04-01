@@ -4,9 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.devmasterteam.tasks.R
 import com.devmasterteam.tasks.service.constants.TaskConstants
-import com.devmasterteam.tasks.service.exception.NoInternetException
 import com.devmasterteam.tasks.service.model.ValidationModel
 import com.devmasterteam.tasks.service.repository.PersonRepository
 import com.devmasterteam.tasks.service.repository.PriorityRepository
@@ -44,7 +42,7 @@ class LoginViewModel(application: Application) : BaseAndroidViewModel(applicatio
 
                     _login.value = ValidationModel()
                 } else {
-                    _login.value = errorMessage(response)
+                    _login.value = parseErrorMessage(response)
                 }
             } catch (e: Exception) {
                 _login.value = handleException(e)
