@@ -1,6 +1,7 @@
 package com.devmasterteam.tasks.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -55,16 +56,20 @@ class LoginViewModel(application: Application) : BaseAndroidViewModel(applicatio
             val token = preferencesManager.get(TaskConstants.SHARED.TOKEN_KEY)
             val personKey = preferencesManager.get(TaskConstants.SHARED.PERSON_KEY)
 
-            if (token != "" && personKey != "") {
-                RetrofitClient.addHeaders(personKey, token)
-                _loggedUser.value = true
+            RetrofitClient.addHeaders(personKey, token)
 
-                val response = priorityRepository.getList()
-                if (response.isSuccessful && response.body() != null) {
-                    priorityRepository.save(response.body()!!)
+            val logged = (token != "" && personKey != "")
+            _loggedUser.value = logged
+
+            if (!logged) {
+                try {
+                    val response = priorityRepository.getList()
+                    if (response.isSuccessful && response.body() != null) {
+                        priorityRepository.save(response.body()!!)
+                    }
+                } catch (e: Exception) {
+                    Log.e("LoginViewModel", e.message.toString())
                 }
-            } else {
-                _loggedUser.value = false
             }
         }
 
