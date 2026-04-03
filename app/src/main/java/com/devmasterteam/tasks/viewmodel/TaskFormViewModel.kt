@@ -20,6 +20,12 @@ class TaskFormViewModel(application: Application) : BaseAndroidViewModel(applica
     private val _taskSaved = MutableLiveData<ValidationModel>()
     val taskSaved: LiveData<ValidationModel> = _taskSaved
 
+    private val _task = MutableLiveData<TaskModel>()
+    val task: LiveData<TaskModel> = _task
+
+    private val _taskLoad = MutableLiveData<ValidationModel>()
+    val taskLoad: LiveData<ValidationModel> = _taskLoad
+
     fun save(task: TaskModel) {
         viewModelScope.launch {
             try {
@@ -28,6 +34,21 @@ class TaskFormViewModel(application: Application) : BaseAndroidViewModel(applica
                     _taskSaved.value = ValidationModel()
                 } else {
                     _taskSaved.value = parseErrorMessage(response)
+                }
+            } catch (e: Exception) {
+                _taskSaved.value = handleException(e)
+            }
+        }
+    }
+
+    fun load(taskId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = taskRepository.load(taskId)
+                if (response.isSuccessful && response.body() != null) {
+                    _task.value = response.body()!!
+                } else {
+                    _taskLoad.value = parseErrorMessage(response)
                 }
             } catch (e: Exception) {
                 _taskSaved.value = handleException(e)

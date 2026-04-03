@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import com.devmasterteam.tasks.R
 import com.devmasterteam.tasks.databinding.ActivityTaskFormBinding
+import com.devmasterteam.tasks.service.constants.TaskConstants
 import com.devmasterteam.tasks.service.model.PriorityModel
 import com.devmasterteam.tasks.service.model.TaskModel
 import com.devmasterteam.tasks.viewmodel.TaskFormViewModel
@@ -30,6 +31,7 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
     }
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     private var listPriority: List<PriorityModel> = mutableListOf()
+    private val taskId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +52,8 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
         // Eventos
         binding.buttonSave.setOnClickListener(this)
         binding.buttonDate.setOnClickListener(this)
+
+        loadDataFromActivity()
 
         observe()
     }
@@ -91,10 +95,45 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
                 toast(it.message())
             }
         }
+
+        viewModel.task.observe(this) {
+            binding.editDescription.setText(it.description)
+            binding.checkComplete.isChecked = it.complete
+            val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(it.dueDate)
+            binding.buttonDate.text = dateFormat.format(date!!)
+            binding.buttonSave.text = getString(R.string.button_update_task)
+
+            binding.spinnerPriority.setSelection(getIndex(it.priorityId))
+        }
+
+        viewModel.taskLoad.observe(this) {
+            if (!it.status()) {
+                toast(it.message())
+            }
+        }
+    }
+
+    private fun getIndex(priorityId: Int): Int {
+        var index = 0
+        for (item in listPriority) {
+            if (item.id == priorityId) {
+                break
+            }
+            index++
+        }
+        return index
     }
 
     private fun toast(str: String) {
         Toast.makeText(applicationContext, str, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun loadDataFromActivity() {
+        val bundle = intent.extras
+        if (bundle != null) {
+            val taskId = bundle.getInt(TaskConstants.BUNDLE.TASKID)
+            viewModel.load(taskId)
+        }
     }
 
     private fun handleSave() {

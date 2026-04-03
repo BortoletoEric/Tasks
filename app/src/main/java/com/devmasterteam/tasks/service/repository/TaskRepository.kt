@@ -17,6 +17,10 @@ class TaskRepository(context: Context): BaseRepository(context) {
         return safeApiCall { remote.complete(id) }
     }
 
+    suspend fun load(id: Int): Response<TaskModel> {
+        return safeApiCall { remote.load(id) }
+    }
+
     suspend fun undo(id: Int): Response<Boolean> {
         return safeApiCall { remote.undo(id) }
     }

@@ -1,5 +1,6 @@
 package com.devmasterteam.tasks.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -40,7 +41,13 @@ class AllTasksFragment : Fragment() {
              * Click para edição
              */
             override fun onListClick(id: kotlin.Int) {
-                TODO("Not yet implemented")
+                val intent = Intent(context, TaskFormActivity::class.java)
+                val bundle = Bundle()
+                bundle.putInt(TaskConstants.BUNDLE.TASKID, id)
+                intent.putExtras(bundle)
+                startActivity(intent)
+                // preencher UI
+                // salvar
             }
 
             /**
