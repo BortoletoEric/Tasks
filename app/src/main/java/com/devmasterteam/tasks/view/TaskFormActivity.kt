@@ -89,7 +89,11 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
 
         viewModel.taskSaved.observe(this) {
             if (it.status()) {
-                toast(getString(R.string.msg_task_created))
+                if (taskId != 0) {
+                    toast(getString(R.string.msg_task_updated))
+                } else {
+                    toast(getString(R.string.msg_task_created))
+                }
                 finish()
             } else {
                 toast(it.message())
@@ -144,7 +148,7 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
             val completed = binding.checkComplete.isChecked
             val dueDate = binding.buttonDate.text.toString()
 
-            val task = TaskModel(0, priorityId, description, dueDate, completed)
+            val task = TaskModel(taskId, priorityId, description, dueDate, completed)
             viewModel.save(task)
         } else {
             toast("Favor selecionar uma prioridade.")

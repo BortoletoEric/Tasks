@@ -29,7 +29,11 @@ class TaskFormViewModel(application: Application) : BaseAndroidViewModel(applica
     fun save(task: TaskModel) {
         viewModelScope.launch {
             try {
-                val response = taskRepository.save(task)
+                val response = if (task.id == 0) {
+                    taskRepository.save(task)
+                } else {
+                    taskRepository.update(task)
+                }
                 if (response.isSuccessful && response.body() != null) {
                     _taskSaved.value = ValidationModel()
                 } else {
