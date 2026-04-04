@@ -25,6 +25,6 @@
         android:layout_marginTop="16dp"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="NOME USUÁRIO"
-        android:textColor="@color/black" />
+        android:textColor="@color/textColor" />
 
 </LinearLayout>
