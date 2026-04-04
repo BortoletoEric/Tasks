@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/shape_login_background"
     android:padding="16dp"
     tools:context=".view.LoginActivity">
 
@@ -20,6 +21,8 @@
 
     <EditText
         android:id="@+id/edit_email"
+        style="@style/WhiteText"
+        android:drawableStart="@drawable/ic_mail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
@@ -34,6 +37,8 @@
 
     <EditText
         android:id="@+id/edit_password"
+        style="@style/WhiteText"
+        android:drawableStart="@drawable/ic_lock"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -48,6 +53,7 @@
 
     <Button
         android:id="@+id/button_login"
+        style="@style/DefaultButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -59,6 +65,7 @@
 
     <TextView
         android:id="@+id/text_new_account"
+        style="@style/WhiteText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/msg_dont_have_account"
@@ -69,6 +76,7 @@
 
     <TextView
         android:id="@+id/text_register"
+        style="@style/WhiteText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

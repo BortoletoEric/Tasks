@@ -33,7 +33,7 @@
         <item name="android:backgroundTint">@color/pink</item>
     </style>
 
-    <style name="WhiteEditText">
+    <style name="WhiteText">
         <item name="android:textColor">@color/white</item>
         <item name="android:textColorHint">@color/white</item>
         <item name="android:backgroundTint">@color/white</item>
