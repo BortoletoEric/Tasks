@@ -25,57 +25,39 @@ class AllTasksFragment : Fragment() {
     private val adapter = TaskAdapter()
     private var taskFilter = 0
 
-    // TAREFAS
-    // recyclerview - descricoes
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, b: Bundle?): View {
         _binding = FragmentAllTasksBinding.inflate(inflater, container, false)
 
         binding.recyclerAllTasks.layoutManager = LinearLayoutManager(context)
         binding.recyclerAllTasks.adapter = adapter
 
+        // Recupera o filtro vindo do Navigation
         taskFilter = requireArguments().getInt(TaskConstants.BUNDLE.TASKFILTER, 0)
 
         val taskListener = object : TaskListener {
-            /**
-             * Click para edição
-             */
-            override fun onListClick(id: kotlin.Int) {
+            override fun onListClick(id: Int) {
                 val intent = Intent(context, TaskFormActivity::class.java)
                 val bundle = Bundle()
                 bundle.putInt(TaskConstants.BUNDLE.TASKID, id)
                 intent.putExtras(bundle)
                 startActivity(intent)
-                // preencher UI
-                // salvar
             }
 
-            /**
-             * Remoção
-             */
-            override fun onDeleteClick(id: kotlin.Int) {
+            override fun onDeleteClick(id: Int) {
                 viewModel.delete(id)
             }
 
-            /**
-             * Completa tarefa
-             */
-            override fun onCompleteClick(id: kotlin.Int) {
+            override fun onCompleteClick(id: Int) {
                 viewModel.status(id, true)
             }
 
-            /**
-             * Descompleta tarefa
-             */
-            override fun onUndoClick(id: kotlin.Int) {
+            override fun onUndoClick(id: Int) {
                 viewModel.status(id, false)
             }
-
         }
 
         adapter.attachListener(taskListener)
 
-        // Cria os observadores
         observe()
 
         return binding.root
@@ -83,9 +65,6 @@ class AllTasksFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
-
-
         viewModel.list(taskFilter)
     }
 
@@ -106,13 +85,15 @@ class AllTasksFragment : Fragment() {
                 toast(it.message())
             }
         }
+
+        viewModel.taskStatus.observe(viewLifecycleOwner) {
+            if (!it.status()) {
+                toast(it.message())
+            }
+        }
     }
 
     private fun toast(str: String) {
-        Toast.makeText(
-            requireContext(),
-            str,
-            Toast.LENGTH_LONG
-        ).show()
+        Toast.makeText(requireContext(), str, Toast.LENGTH_SHORT).show()
     }
 }

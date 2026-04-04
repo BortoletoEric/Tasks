@@ -31,7 +31,7 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
     }
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     private var listPriority: List<PriorityModel> = mutableListOf()
-    private val taskId = 0
+    private var taskId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,10 +89,10 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
 
         viewModel.taskSaved.observe(this) {
             if (it.status()) {
-                if (taskId != 0) {
-                    toast(getString(R.string.msg_task_updated))
-                } else {
+                if (taskId == 0) {
                     toast(getString(R.string.msg_task_created))
+                } else {
+                    toast(getString(R.string.msg_task_updated))
                 }
                 finish()
             } else {
@@ -101,6 +101,7 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
         }
 
         viewModel.task.observe(this) {
+            taskId = it.id
             binding.editDescription.setText(it.description)
             binding.checkComplete.isChecked = it.complete
             val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(it.dueDate)
@@ -135,7 +136,7 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
     private fun loadDataFromActivity() {
         val bundle = intent.extras
         if (bundle != null) {
-            val taskId = bundle.getInt(TaskConstants.BUNDLE.TASKID)
+            taskId = bundle.getInt(TaskConstants.BUNDLE.TASKID)
             viewModel.load(taskId)
         }
     }
