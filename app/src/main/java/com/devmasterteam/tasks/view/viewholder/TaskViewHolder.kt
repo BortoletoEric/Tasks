@@ -33,7 +33,7 @@ class TaskViewHolder(private val itemBinding: ItemTaskListBinding, val listener:
         itemBinding.textPriority.text = task.priorityDescription
 
         // Eventos
-        itemBinding.textDescription.setOnClickListener { listener.onListClick(task.id) }
+        itemBinding.root.setOnClickListener { listener.onListClick(task.id) }
         itemBinding.imageTask.setOnClickListener {
             if (task.complete) {
                 listener.onUndoClick(task.id)
@@ -42,7 +42,7 @@ class TaskViewHolder(private val itemBinding: ItemTaskListBinding, val listener:
             }
         }
 
-        itemBinding.textDescription.setOnLongClickListener {
+        itemBinding.root.setOnLongClickListener {
             AlertDialog.Builder(itemView.context)
                 .setTitle(R.string.title_task_removal)
                 .setMessage(R.string.label_remove_task)

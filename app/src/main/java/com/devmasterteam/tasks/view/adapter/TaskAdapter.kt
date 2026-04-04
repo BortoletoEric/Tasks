@@ -36,4 +36,8 @@ class TaskAdapter : RecyclerView.Adapter<TaskViewHolder>() {
         listener = taskListener
     }
 
+    fun getTaskId(position: Int): Int {
+        return listTasks[position].id
+    }
+
 }

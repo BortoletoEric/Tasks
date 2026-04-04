@@ -1,5 +1,6 @@
 package com.devmasterteam.tasks.view
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +9,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.devmasterteam.tasks.R
 import com.devmasterteam.tasks.databinding.FragmentAllTasksBinding
 import com.devmasterteam.tasks.service.constants.TaskConstants
@@ -31,7 +34,6 @@ class AllTasksFragment : Fragment() {
         binding.recyclerAllTasks.layoutManager = LinearLayoutManager(context)
         binding.recyclerAllTasks.adapter = adapter
 
-        // Recupera o filtro vindo do Navigation
         taskFilter = requireArguments().getInt(TaskConstants.BUNDLE.TASKFILTER, 0)
 
         val taskListener = object : TaskListener {
@@ -57,6 +59,30 @@ class AllTasksFragment : Fragment() {
         }
 
         adapter.attachListener(taskListener)
+
+        // Implementação do Swipe
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val taskId = adapter.getTaskId(viewHolder.adapterPosition)
+
+                AlertDialog.Builder(context)
+                    .setTitle(R.string.title_task_removal)
+                    .setMessage(R.string.label_remove_task)
+                    .setPositiveButton(R.string.button_yes) { _, _ ->
+                        viewModel.delete(taskId)
+                    }
+                    .setNeutralButton(R.string.button_cancel) { _, _ ->
+                        adapter.notifyItemChanged(viewHolder.adapterPosition)
+                    }
+                    .show()
+            }
+        })
+
+        itemTouchHelper.attachToRecyclerView(binding.recyclerAllTasks)
 
         observe()
 
