@@ -87,7 +87,7 @@
         android:background="@android:color/transparent"
         android:gravity="center"
         android:hint="@string/button_select_date"
-        android:textColor="@color/black"
+        android:textColor="@color/textColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_date" />
